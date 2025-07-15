@@ -1,0 +1,24 @@
+[project]
+name = "kcpdi"
+description="Linear kernel anomaly/change-point detection in multidimensional time series data"
+readme = "README.md"
+dynamic = ["dependencies"]
+version= "0.1.0"
+license ="MPL-2.0"
+requires-python = ">=3.9"
+authors = [
+  {name = "Kevin Bleakley"},
+  {email="kevin.bleakley@inria.fr"}
+]
+
+[project.urls]
+Homepage = "https://confianceai.github.io/kernel-change-point-detection"
+Documentation = "https://confianceai.github.io/kernel-change-point-detection"
+Repository = "https://github.com/confianceai/kernel-change-point-detection"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
