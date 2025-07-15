@@ -39,3 +39,9 @@ jobs:
             chmod +x run_quality_check.sh
             ./run_quality_check.sh
             cd ..
+       - name: Launch test coverage
+         run: |
+            cd scripts 
+            chmod +x run_test_coverage.sh
+            ./run_test_coverage.sh
+            cd ..

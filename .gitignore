@@ -11,6 +11,7 @@ docs/_build/
 *.ipynb_checkpoints*
 .coverage
 
+
 # Sphinx documentation
 docs/_build/
 docs/build

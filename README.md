@@ -11,6 +11,9 @@
     <a href="_static/flake8/index.html">
         <img src="_static/flake8/flake8.svg" alt="Flake8 Report">
     </a>
+    <a href="_static/coverage/index.html">
+        <img src="_static/coverage/coverage.svg" alt="Coverage report">
+    </a>
 </div>
 <br>
 
