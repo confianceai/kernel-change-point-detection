@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kcpdi package &mdash; Kernel-change-point-detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Kernel-change-point-detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="guidelines.html">💡 Guideline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">🔎 Package kcpdi</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Kernel-change-point-detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">kcpdi package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kcpdi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kcpdi-package">
+<h1>kcpdi package<a class="headerlink" href="#kcpdi-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kcpdi.kcp_ds">
+<span id="kcpdi-kcp-ds-module"></span><h2>kcpdi.kcp_ds module<a class="headerlink" href="#module-kcpdi.kcp_ds" title="Link to this heading"></a></h2>
+<p>This module, <cite>kcp_ds</cite> (Kernel Change Point Detect Select), encapsulates functions from the Ruptures
+package and includes a function for penalized variable selection.</p>
+<p>Specific details and remarks:
+1. The function outputs Python indices of the columns of “data” corresponding to the detected
+change points. Real-world times associated with the data are not considered in this function.
+2. The ruptures class KernelCPD has a minimum allowed segment size (min_size). It is currently set
+to 2 by default and is not an input parameter for kcp_ds.
+3. The default kernel is “linear,” with options for “cosine” and “rbf” kernels. To cover all bases,
+an input params is required, which defaults to None but can be modified for the rbf kernel (e.g.,
+params = {“gamma”: value_of_gamma}).
+4. Due to memory constraints, the algorithm processes offline time-series data longer than max_n_time_points
+in segments of length max_n_time_points, and then outputs the full set of change points.</p>
+<p>Note: Please handle real-world times associated with the data independently as this module focuses
+on change point detection and variable selection.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kcpdi.kcp_ds.kcp_ds">
+<span class="sig-prename descclassname"><span class="pre">kcpdi.kcp_ds.</span></span><span class="sig-name descname"><span class="pre">kcp_ds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cosine'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'rbf'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_n_time_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_n_time_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_frac_anomaly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kcpdi/kcp_ds.html#kcp_ds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kcpdi.kcp_ds.kcp_ds" title="Link to this definition"></a></dt>
+<dd><p>Return a set of important change points change points after
+running kernel change point detection followed by penalized model
+selection using the slope heuristic method.</p>
+<p>Since the criterion is responding to noise/overfitting, penalized
+variable selection is performed in order to obtain a final decision
+as to how many of the detected change points are truly significant
+and not simply adjusted noise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – array of dimension (number of time points) x (number of
+time-series) containing the data points.</p></li>
+<li><p><strong>kernel</strong> – Kernel of the kernet change_point detection. If it is
+rbf, params must include a “gamma” parameters, with a
+positive real value.</p></li>
+<li><p><strong>params</strong> – parameters for the kernel instance</p></li>
+<li><p><strong>max_n_time_points</strong> – maximum size (max_n_time_points) x
+(max_n_time_points) of matrices expected to be processed
+quickly by the computer system.</p></li>
+<li><p><strong>min_n_time_points</strong> – minimum number of time points in the current
+dataset for which it makes sense to run the detection
+algorithm again. If there are fewer than min_n_time_points
+points in the dataset, no computations will be run and the
+outputs will be empty.</p></li>
+<li><p><strong>expected_frac_anomaly</strong> – This parameter encodes prior knowledge
+of users as to how often anomalies might occur. Results can
+be quite dependent on the choice of this parameter, so
+choose carefully!</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kcpdi.kcp_ss_learner">
+<span id="kcpdi-kcp-ss-learner-module"></span><h2>kcpdi.kcp_ss_learner module<a class="headerlink" href="#module-kcpdi.kcp_ss_learner" title="Link to this heading"></a></h2>
+<p>This module, <cite>kcp_ss_learner</cite> (Kernel Change Point Sample Scorer Learner), includes a wrapper to
+perform anomaly scoring as understood in the TADkit formalism, based on this library’s change-point
+detection methodology.</p>
+<p>The kernel change-point detection algorithm outputs a final list of time indices at which it thinks
+that “something happened”.</p>
+<p>Other methods output a score at __all__ time indices, where the higher the score is, the more we
+believe that “something happened there”.</p>
+<p>In order to allow the kernel change-point method to be integrated into a Python package based
+around score samples, we have implemented a function __kcp_ss__ which takes the __kcp_ds__ output
+list of change-points and turns them into scores at __all time <a href="#id1"><span class="problematic" id="id2">indices__</span></a>.</p>
+<p>Remember that the kernel change-point detection algorithm truly believes that it has found the true
+and only set of change-points. However, due to random noise, it could have been that a true
+change-point was immediately before or immediately after a detected change-point, i.e., 1 or 2 or
+maybe even 3 time indices before or after.</p>
+<p>We give a score of 1 at each detected change-point. Other points are assigned a score that
+decreases as they move away from the detected change-point, in a way parameterized by a decay
+parameter (gamma).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kcpdi.kcp_ss_learner.KcpLearner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kcpdi.kcp_ss_learner.</span></span><span class="sig-name descname"><span class="pre">KcpLearner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cosine'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'rbf'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_n_time_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_n_time_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_frac_anomaly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kcpdi/kcp_ss_learner.html#KcpLearner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kcpdi.kcp_ss_learner.KcpLearner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">OutlierMixin</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kcpdi.kcp_ss_learner.KcpLearner.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kcpdi/kcp_ss_learner.html#KcpLearner.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kcpdi.kcp_ss_learner.KcpLearner.fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kcpdi.kcp_ss_learner.KcpLearner.params_description">
+<span class="sig-name descname"><span class="pre">params_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'decay_param':</span> <span class="pre">{'default':</span> <span class="pre">1,</span> <span class="pre">'description':</span> <span class="pre">'How</span> <span class="pre">fast</span> <span class="pre">the</span> <span class="pre">score</span> <span class="pre">decays</span> <span class="pre">around</span> <span class="pre">the</span> <span class="pre">change-points.',</span> <span class="pre">'family':</span> <span class="pre">'postprocessing',</span> <span class="pre">'log_start':</span> <span class="pre">-2,</span> <span class="pre">'log_step':</span> <span class="pre">0.1,</span> <span class="pre">'log_stop':</span> <span class="pre">2,</span> <span class="pre">'value_type':</span> <span class="pre">'log_range'}}</span></em><a class="headerlink" href="#kcpdi.kcp_ss_learner.KcpLearner.params_description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kcpdi.kcp_ss_learner.KcpLearner.required_properties">
+<span class="sig-name descname"><span class="pre">required_properties</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#kcpdi.kcp_ss_learner.KcpLearner.required_properties" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kcpdi.kcp_ss_learner.KcpLearner.score_samples">
+<span class="sig-name descname"><span class="pre">score_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kcpdi/kcp_ss_learner.html#KcpLearner.score_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kcpdi.kcp_ss_learner.KcpLearner.score_samples" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kcpdi.kcp_v">
+<span id="kcpdi-kcp-v-module"></span><h2>kcpdi.kcp_v module<a class="headerlink" href="#module-kcpdi.kcp_v" title="Link to this heading"></a></h2>
+<p>This module, <cite>kcp_v</cite> (Kernel Change Point Visualisation), includes a function for visualization and
+explainability. It extracts intervals around each detected change point, illustrating the
+contribution of each sensor to the change point criterion. Each interval is bounded on the left by
+either 0 or the previous change point location and on the right by either the next change point or
+the time series end-point. The visualization highlights the change point’s location with a vertical
+dotted red line and displays the algorithm criterion as a blue curve.</p>
+<p>Remarks:
+1. For clarity in visualization, individual time series related to different change points are
+visualized separately, resulting in one plot per detected change point.
+2. The visualization function accommodates the algorithm’s processing of a maximum of
+“max_n_time_points” in each loop. If the total exceeds “max_n_time_points,” the interval
+calculation differs for the last change point found in each loop. Hence, “max_n_time_points” must
+be consistent between the change point detection and visualization functions.
+3. Only the linear kernel provides criterion lines for each individual time series that sum up to
+the value of the global criterion line. Although designed for the linear kernel, the visualization
+function can be used for other kernels (if the same kernel is used in the kcp_ds function).
+4. #data: The input data array must be the exact same array used in the kcp_ds function.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kcpdi.kcp_v.kcp_v">
+<span class="sig-prename descclassname"><span class="pre">kcpdi.kcp_v.</span></span><span class="sig-name descname"><span class="pre">kcp_v</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detected_change_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_end_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_legend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/kcpdi/kcp_v.html#kcp_v"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kcpdi.kcp_v.kcp_v" title="Link to this definition"></a></dt>
+<dd><p>Visualize the post-hoc importance of each individual time series
+in the detection of each shared change point by the kernel change
+point detection algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – array of dimension (number of time points) x (number of
+time-series) containing the data points.</p></li>
+<li><p><strong>true_times</strong> – the dataset-dependent true time points (after any
+postprocessing steps required to interpolate data to a fixed
+time grid). This is required to make more meaningful plot
+outputs, or to obtain the actual true times of predicted
+change points. true_times should have the length of the
+first dimension of data.</p></li>
+<li><p><strong>detected_change_points</strong> – the detected change points. It should be
+the first output of the kcp_ds function.</p></li>
+<li><p><strong>interval_end_points</strong> – indices of the ends of intervals of length
+max_n_time_points. It should be the second output of kcpDS.</p></li>
+<li><p><strong>n_legend</strong> – the number of “important” individual time series you
+want to be colorful in the final plot.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kcpdi.utils">
+<span id="kcpdi-utils-module"></span><h2>kcpdi.utils module<a class="headerlink" href="#module-kcpdi.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="kcpdi.utils.fig_ax">
+<span class="sig-prename descclassname"><span class="pre">kcpdi.utils.</span></span><span class="sig-name descname"><span class="pre">fig_ax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(15,</span> <span class="pre">5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/kcpdi/utils.html#fig_ax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kcpdi.utils.fig_ax" title="Link to this definition"></a></dt>
+<dd><p>Generate a (matplotlib) figure and ax objects with given size.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kcpdi.utils.get_sum_of_cost">
+<span class="sig-prename descclassname"><span class="pre">kcpdi.utils.</span></span><span class="sig-name descname"><span class="pre">get_sum_of_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bkps</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/kcpdi/utils.html#get_sum_of_cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kcpdi.utils.get_sum_of_cost" title="Link to this definition"></a></dt>
+<dd><p>Calculate the sum of costs for the change points <cite>bkps</cite>.</p>
+<p>Utility function used to do penalized variable selection and obtain
+a final list of anomaly time points.</p>
+</dd></dl>
+
+</section>
+<section id="module-kcpdi">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kcpdi" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, INRIA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

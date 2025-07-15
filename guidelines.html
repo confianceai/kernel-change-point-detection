@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💡 Guideline &mdash; Kernel-change-point-detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="🔄 Changelog" href="changelog.html" />
+    <link rel="prev" title="Welcome to RobustML’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Kernel-change-point-detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">💡 Guideline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-environement">Setting environement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples-and-demonstrators">Examples and demonstrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tadkit-link">TADkit link</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">🔎 Package kcpdi</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Kernel-change-point-detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">💡 Guideline</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/guidelines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guideline">
+<span id="guidelines"></span><h1>💡 Guideline<a class="headerlink" href="#guideline" title="Link to this heading"></a></h1>
+<p>To utilize this library, ensure that you have Python 3.9 or a later version installed.</p>
+<section id="setting-environement">
+<h2>Setting environement<a class="headerlink" href="#setting-environement" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
+virtualenv<span class="w"> </span>-p<span class="w"> </span>&lt;path/to/python3.10&gt;<span class="w"> </span>myenv
+<span class="nb">source</span><span class="w"> </span>myenv/bin/activate
+</pre></div>
+</div>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>Once your virtual environment is activated, you can install the Kernel-point-change-detection library directly from Pypi by typing :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>kcpdi
+</pre></div>
+</div>
+<p>This command will install the kcpdi package and all required dependencies.
+Within your python code, you can then access the library functions by using the following import statement:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">kcpdi</span>
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<p>Our algorithm takes pre-processed (interpolated to a fixed time grid, normalized, etc.) and offline (not streaming) multidimensional time series data and runs linear kernel anomaly/change-point detection on it in order to output a list of likely anomaly/change-points in time.
+The method is based on results in Arlot et al. (2019).</p>
+<p>We have started to develop automated post-hoc visualization tools in order to provide intuitive explicability in the output results in order to attribute a ranked (in terms of importance) list of individual time series for each detected anomaly/change-point. This is because it is otherwise difficult to know ‘why’ a change-point was detected at a certain point if there are hundreds or thousands of individual concurrent time series. The latter tool is semi-dependent of the anomaly/change-point detection step.</p>
+</section>
+<section id="examples-and-demonstrators">
+<h2>Examples and demonstrators<a class="headerlink" href="#examples-and-demonstrators" title="Link to this heading"></a></h2>
+<p>The following <a class="reference internal" href="examples/Example.html"><span class="std std-doc">notebook</span></a> incorporates the most important features:</p>
+</section>
+<section id="tadkit-link">
+<h2>TADkit link<a class="headerlink" href="#tadkit-link" title="Link to this heading"></a></h2>
+<p>In order to allow the kernel change-point method to be integrated into a Python package based around score samples, we have implemented a function <strong>kcp_ss</strong> which takes the <strong>kcp_ds</strong> output list of change-points and turns them into scores at <strong>all time indices</strong>.</p>
+<p>We give a score of 1 at each detected change-point. Then, we define a decay_parameter <em>γ</em> (default <em>γ = 1</em>). Then,</p>
+<ul>
+  <li>For any time index that exactly corresponds to a detected change-point index, its score is 1.</li>
+  <li>For any time index <em>t<sub>*</sub></em> before the first detected change-point time index <em>t<sub>1</sub></em>, its score is
+    <p>$$\left(\frac{1}{2}\right)^{\gamma |t_1 - t_*|}$$</p></li>
+  <li>For any time index <em>t<sub>*</sub></em> after the last detected change-point time index <em>t<sub>last</sub></em>, its score is
+    <p>$$\left(\frac{1}{2}\right)^{\gamma |t_{last} - t_*|}$$</p></li>
+  <li>For any time index <em>t<sub>*</sub></em> between change-point time indices <em>t<sub>j</sub></em> and <em>t<sub>j+1</sub></em>, its score is the average of the left and right scores:
+    <p>$$\frac{1}{2}\left( \left(\frac{1}{2}\right)^{\gamma |t_{j} - t_*|} + \left(\frac{1}{2}\right)^{\gamma |t_{j+1} - t_*|} \right)$$</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to RobustML’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="changelog.html" class="btn btn-neutral float-right" title="🔄 Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, INRIA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+************* Module kcpdi
+kcpdi/__init__.py:1:0: C0305: Trailing newlines (trailing-newlines)
+************* Module kcpdi.kcp_ds
+kcpdi/kcp_ds.py:72:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:123:77: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:144:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:190:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:194:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:202:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:204:90: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:220:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:226:9: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:227:72: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:235:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:274:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:280:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:289:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:291:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:296:80: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:297:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:306:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:313:0: C0303: Trailing whitespace (trailing-whitespace)
+kcpdi/kcp_ds.py:31:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+kcpdi/kcp_ds.py:155:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module kcpdi.utils
+kcpdi/utils.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module kcpdi.kcp_v
+kcpdi/kcp_v.py:209:0: C0325: Unnecessary parens after 'if' keyword (superfluous-parens)
+kcpdi/kcp_v.py:27:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module kcpdi.kcp_ss_learner
+kcpdi/kcp_ss_learner.py:34:0: C0115: Missing class docstring (missing-class-docstring)
+kcpdi/kcp_ss_learner.py:49:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+kcpdi/kcp_ss_learner.py:65:4: C0116: Missing function or method docstring (missing-function-docstring)
+kcpdi/kcp_ss_learner.py:65:18: W0613: Unused argument 'X' (unused-argument)
+kcpdi/kcp_ss_learner.py:65:21: W0613: Unused argument 'y' (unused-argument)
+kcpdi/kcp_ss_learner.py:96:11: C1802: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty (use-implicit-booleaness-not-len)
+kcpdi/kcp_ss_learner.py:144:4: C0116: Missing function or method docstring (missing-function-docstring)
+kcpdi/kcp_ss_learner.py:148:36: E1102: kcp_ds is not callable (not-callable)
+
+-----------------------------------
+Your code has been rated at 7.89/10
+

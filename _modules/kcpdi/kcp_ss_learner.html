@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kcpdi.kcp_ss_learner &mdash; Kernel-change-point-detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Kernel-change-point-detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guidelines.html">💡 Guideline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">🔎 Package kcpdi</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Kernel-change-point-detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">kcpdi.kcp_ss_learner</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kcpdi.kcp_ss_learner</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module, `kcp_ss_learner` (Kernel Change Point Sample Scorer Learner), includes a wrapper to</span>
+<span class="sd">perform anomaly scoring as understood in the TADkit formalism, based on this library&#39;s change-point</span>
+<span class="sd">detection methodology.</span>
+
+<span class="sd">The kernel change-point detection algorithm outputs a final list of time indices at which it thinks</span>
+<span class="sd">that &quot;something happened&quot;. </span>
+
+<span class="sd">Other methods output a score at __all__ time indices, where the higher the score is, the more we</span>
+<span class="sd">believe that &quot;something happened there&quot;. </span>
+
+<span class="sd">In order to allow the kernel change-point method to be integrated into a Python package based</span>
+<span class="sd">around score samples, we have implemented a function __kcp_ss__ which takes the __kcp_ds__ output</span>
+<span class="sd">list of change-points and turns them into scores at __all time indices__.</span>
+
+<span class="sd">Remember that the kernel change-point detection algorithm truly believes that it has found the true</span>
+<span class="sd">and only set of change-points. However, due to random noise, it could have been that a true</span>
+<span class="sd">change-point was immediately before or immediately after a detected change-point, i.e., 1 or 2 or</span>
+<span class="sd">maybe even 3 time indices before or after.</span>
+
+<span class="sd">We give a score of 1 at each detected change-point. Other points are assigned a score that</span>
+<span class="sd">decreases as they move away from the detected change-point, in a way parameterized by a decay</span>
+<span class="sd">parameter (gamma).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">OutlierMixin</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">kcpdi</span><span class="w"> </span><span class="kn">import</span> <span class="n">kcp_ds</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="KcpLearner">
+<a class="viewcode-back" href="../../kcpdi.html#kcpdi.kcp_ss_learner.KcpLearner">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KcpLearner</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">OutlierMixin</span><span class="p">):</span>
+    <span class="n">required_properties</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">params_description</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;decay_param&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;How fast the score decays around the change-points.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;postprocessing&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;log_range&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_start&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;log_step&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+            <span class="s2">&quot;log_stop&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">kernel</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="s2">&quot;rbf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+            <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">max_n_time_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+            <span class="n">min_n_time_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="n">expected_frac_anomaly</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">decay_param</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_n_time_points</span> <span class="o">=</span> <span class="n">max_n_time_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_n_time_points</span> <span class="o">=</span> <span class="n">min_n_time_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_frac_anomaly</span> <span class="o">=</span> <span class="n">expected_frac_anomaly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decay_param</span> <span class="o">=</span> <span class="n">decay_param</span>
+
+<div class="viewcode-block" id="KcpLearner.fit">
+<a class="viewcode-back" href="../../kcpdi.html#kcpdi.kcp_ss_learner.KcpLearner.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_kcp_ss</span><span class="p">(</span>
+            <span class="n">detected_change_points</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+            <span class="n">n_time_points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">decay_param</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Take the output list of detected change-points from the</span>
+<span class="sd">        function kcp_ds() and transform them into a score at each time</span>
+<span class="sd">        point from 0 (low probability of an anomaly at the time point)</span>
+<span class="sd">        to 1 (high probability of an anomaly at the time point).</span>
+
+<span class="sd">        Args:   </span>
+<span class="sd">            detected_change_points: The detected change-points. It</span>
+<span class="sd">                should be the first output of the kcp_ds function.</span>
+<span class="sd">            n_time_points: The number of time points in the input data. </span>
+<span class="sd">                Usually this will be something like: np.shape(data)[0].</span>
+<span class="sd">            decay_param: Parameter that defines how fast the score</span>
+<span class="sd">                decays around the change-points. The larger this value,</span>
+<span class="sd">                the faster it decays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">decay_param</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;decay_param has to be positive.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Create list of 0s of length n_time_points</span>
+        <span class="n">kcp_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_time_points</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">kcp_scores</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_time_points</span><span class="p">):</span>
+
+            <span class="c1"># Cases:</span>
+            <span class="c1"># 1) i is in the list of change-point indices</span>
+            <span class="c1"># 2) i is before the first change-point index</span>
+            <span class="c1"># 3) i is between two change-point indices</span>
+            <span class="c1"># 4) i is after the last change-point index</span>
+
+            <span class="c1"># Create a local version of the input variable detected_change_points</span>
+            <span class="c1"># and append i to it:</span>
+            <span class="n">local_detected_change_points</span> <span class="o">=</span> <span class="n">detected_change_points</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">local_detected_change_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="c1"># A couple of useful values:</span>
+            <span class="n">sum_first</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">detected_change_points</span><span class="p">)</span>
+            <span class="n">sum_last</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">detected_change_points</span><span class="p">)</span>
+
+            <span class="c1"># Case (1)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">local_detected_change_points</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">):</span>
+                <span class="n">kcp_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="c1"># Case (2)</span>
+            <span class="k">elif</span> <span class="n">sum_first</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">):</span>
+                <span class="c1"># We only have the distance to the first change-point index to deal with:</span>
+                <span class="n">curr_dist</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">detected_change_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">kcp_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span>
+
+            <span class="c1"># Case (4)</span>
+            <span class="k">elif</span> <span class="n">sum_last</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">):</span>
+                <span class="c1"># We only have the distance to the last change-point index to deal with:</span>
+                <span class="n">curr_dist</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">detected_change_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">kcp_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span>
+
+            <span class="c1"># Case (3)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n_left</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">detected_change_points</span><span class="p">)</span>
+                <span class="n">curr_dist_left</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">detected_change_points</span><span class="p">[</span><span class="n">n_left</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">curr_dist_right</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">detected_change_points</span><span class="p">[</span><span class="n">n_left</span><span class="p">])</span>
+                <span class="n">kcp_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                        <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist_left</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist_right</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">kcp_scores</span>
+
+<div class="viewcode-block" id="KcpLearner.score_samples">
+<a class="viewcode-back" href="../../kcpdi.html#kcpdi.kcp_ss_learner.KcpLearner.score_samples">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">score_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">):</span>
+            <span class="c1"># small hack to handle DataFrame s</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">detected_change_points</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">kcp_ds</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">max_n_time_points</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_n_time_points</span><span class="p">,</span>
+            <span class="n">min_n_time_points</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_n_time_points</span><span class="p">,</span>
+            <span class="n">expected_frac_anomaly</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_frac_anomaly</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span> <span class="n">score</span> <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kcp_ss</span><span class="p">(</span>
+            <span class="n">detected_change_points</span><span class="o">=</span><span class="n">detected_change_points</span><span class="p">,</span>
+            <span class="n">n_time_points</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span>
+            <span class="n">decay_param</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decay_param</span>
+        <span class="p">)])</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, INRIA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
