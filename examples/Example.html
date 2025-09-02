@@ -18,8 +18,6 @@
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -82,17 +80,17 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from typing import List, Tuple
-import random
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
-import numpy as np
-import matplotlib.pyplot as plt
-import ruptures as rpt
-from scipy.stats import gaussian_kde
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ruptures</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rpt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_kde</span>
 
-# import sys; sys.path.insert(0, &quot;..&quot;)
-from kcpdi.kcp_ds import kcp_ds
-from kcpdi.kcp_v import kcp_v
+<span class="c1"># import sys; sys.path.insert(0, &quot;..&quot;)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kcpdi.kcp_ds</span><span class="w"> </span><span class="kn">import</span> <span class="n">kcp_ds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kcpdi.kcp_v</span><span class="w"> </span><span class="kn">import</span> <span class="n">kcp_v</span>
 </pre></div>
 </div>
 </div>
@@ -115,60 +113,60 @@ from kcpdi.kcp_v import kcp_v
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def generate_random_data_with_random_peaks(
-    num_rows: int,
-    num_columns: int,
-    mean_jump_probability: float = 0.005,
-    num_peak_rows: int = 5,
-) -&gt; Tuple[np.array, List[List[int]], List[int]]:
-    &quot;&quot;&quot;Generate a NumPy array with Gaussian data and random jumps in
-    mean at specified peak rows.
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_random_data_with_random_peaks</span><span class="p">(</span>
+    <span class="n">num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_columns</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">mean_jump_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.005</span><span class="p">,</span>
+    <span class="n">num_peak_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a NumPy array with Gaussian data and random jumps in</span>
+<span class="sd">    mean at specified peak rows.</span>
 
-    Args:
-        num_rows: Number of rows (time points).
-        num_columns: Number of columns (time series).
-        mean_jump_probability: Base probability of a mean jump occurring
-            in a column.
-        num_peak_rows: Number of peak rows with increased jump
-            probability.
+<span class="sd">    Args:</span>
+<span class="sd">        num_rows: Number of rows (time points).</span>
+<span class="sd">        num_columns: Number of columns (time series).</span>
+<span class="sd">        mean_jump_probability: Base probability of a mean jump occurring</span>
+<span class="sd">            in a column.</span>
+<span class="sd">        num_peak_rows: Number of peak rows with increased jump</span>
+<span class="sd">            probability.</span>
 
-    Returns:
-        The generated NumPy array.
-        The list of jump positions for each column.
-        The row indices of the peak rows.
-    &quot;&quot;&quot;
+<span class="sd">    Returns:</span>
+<span class="sd">        The generated NumPy array.</span>
+<span class="sd">        The list of jump positions for each column.</span>
+<span class="sd">        The row indices of the peak rows.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    if (num_peak_rows &gt;= num_rows):
-        num_peak_rows = num_rows-1
-        print(&quot;The variable num_peak_rows was greater than or equal to num_rows, we have reduced it to size num_rows-1&quot;)
+    <span class="k">if</span> <span class="p">(</span><span class="n">num_peak_rows</span> <span class="o">&gt;=</span> <span class="n">num_rows</span><span class="p">):</span>
+        <span class="n">num_peak_rows</span> <span class="o">=</span> <span class="n">num_rows</span><span class="o">-</span><span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The variable num_peak_rows was greater than or equal to num_rows, we have reduced it to size num_rows-1&quot;</span><span class="p">)</span>
 
 
-    data = np.empty((num_rows, num_columns))
-    jump_positions = [[] for _ in range(num_columns)]
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">))</span>
+    <span class="n">jump_positions</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_columns</span><span class="p">)]</span>
 
-    # Randomly select row indices for peak rows
-    peak_rows = random.sample(range(num_rows), num_peak_rows)
+    <span class="c1"># Randomly select row indices for peak rows</span>
+    <span class="n">peak_rows</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">),</span> <span class="n">num_peak_rows</span><span class="p">)</span>
 
-    for col in range(num_columns):
-        mean = 0  # Initialize mean for this column
-        for row in range(num_rows):
-            if row in peak_rows:
-                jump_prob = mean_jump_probability * 50  # Higher probability at peak rows
-            else:
-                jump_prob = mean_jump_probability
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_columns</span><span class="p">):</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Initialize mean for this column</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">peak_rows</span><span class="p">:</span>
+                <span class="n">jump_prob</span> <span class="o">=</span> <span class="n">mean_jump_probability</span> <span class="o">*</span> <span class="mi">50</span>  <span class="c1"># Higher probability at peak rows</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">jump_prob</span> <span class="o">=</span> <span class="n">mean_jump_probability</span>
 
-            if random.random() &lt; jump_prob:
-                # Randomly jump the mean
-                jump = random.uniform(-5, 5)
-                mean += jump
-                jump_positions[col].append((row, jump))
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">jump_prob</span><span class="p">:</span>
+                <span class="c1"># Randomly jump the mean</span>
+                <span class="n">jump</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+                <span class="n">mean</span> <span class="o">+=</span> <span class="n">jump</span>
+                <span class="n">jump_positions</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">row</span><span class="p">,</span> <span class="n">jump</span><span class="p">))</span>
 
-            data[row, col] = mean + np.random.normal(0, 1)  # Generate Gaussian data with the current mean
+            <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Generate Gaussian data with the current mean</span>
 
-        # Normalize the column to have mean 0 and variance 1
-        data[:, col] = (data[:, col] - np.mean(data[:, col])) / (1*(np.std(data[:, col])==0) + np.std(data[:, col]))
+        <span class="c1"># Normalize the column to have mean 0 and variance 1</span>
+        <span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">])</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]))</span>
 
-    return data, jump_positions, peak_rows
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">jump_positions</span><span class="p">,</span> <span class="n">peak_rows</span>
 </pre></div>
 </div>
 </div>
@@ -176,15 +174,15 @@ from kcpdi.kcp_v import kcp_v
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>num_rows = 1000  # Number of time points
-num_columns = 100  # Number of time series
-mean_jump_probability = 0.005  # Base jump probability
-num_peak_rows = 5  # Number of peak rows
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_rows</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Number of time points</span>
+<span class="n">num_columns</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Number of time series</span>
+<span class="n">mean_jump_probability</span> <span class="o">=</span> <span class="mf">0.005</span>  <span class="c1"># Base jump probability</span>
+<span class="n">num_peak_rows</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Number of peak rows</span>
 
-# Call the function to generate random data with random peak rows
-random_data, jump_positions, peak_rows = generate_random_data_with_random_peaks(
-    num_rows, num_columns, mean_jump_probability, num_peak_rows
-)
+<span class="c1"># Call the function to generate random data with random peak rows</span>
+<span class="n">random_data</span><span class="p">,</span> <span class="n">jump_positions</span><span class="p">,</span> <span class="n">peak_rows</span> <span class="o">=</span> <span class="n">generate_random_data_with_random_peaks</span><span class="p">(</span>
+    <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">,</span> <span class="n">mean_jump_probability</span><span class="p">,</span> <span class="n">num_peak_rows</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -196,55 +194,55 @@ random_data, jump_positions, peak_rows = generate_random_data_with_random_peaks(
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def plot_data_in_subplots_with_lines_limited(
-    data: np.array,
-    jump_positions: List[List[int]],
-    title: str = &quot;Random Data with Jumps&quot;,
-) -&gt; None:
-    &quot;&quot;&quot;Plot the generated data for each column in separate subplots with
-    vertical red lines at jump positions.
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_data_in_subplots_with_lines_limited</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+    <span class="n">jump_positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Random Data with Jumps&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the generated data for each column in separate subplots with</span>
+<span class="sd">    vertical red lines at jump positions.</span>
 
-    Limit the number of subplots displayed to at most 20 if there are
-    more columns.
+<span class="sd">    Limit the number of subplots displayed to at most 20 if there are</span>
+<span class="sd">    more columns.</span>
 
-    Args:
-        data: The generated data as a NumPy array.
-        jump_positions: List of jump positions for each column.
-        title: Title of the overall plot.
-    &quot;&quot;&quot;
-    num_columns = data.shape[1]
+<span class="sd">    Args:</span>
+<span class="sd">        data: The generated data as a NumPy array.</span>
+<span class="sd">        jump_positions: List of jump positions for each column.</span>
+<span class="sd">        title: Title of the overall plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_columns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    if num_columns &gt; 20:
-        # If there are more than 20 columns, limit to the first 20
-        num_columns = 20
+    <span class="k">if</span> <span class="n">num_columns</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="c1"># If there are more than 20 columns, limit to the first 20</span>
+        <span class="n">num_columns</span> <span class="o">=</span> <span class="mi">20</span>
 
-    fig, axes = plt.subplots(num_columns, 1, figsize=(10, 2 * num_columns), sharex=True, sharey=True)
-    fig.suptitle(title)
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">num_columns</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_columns</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 
-    if num_columns == 1:
-        plt.plot(data[:,0])
-        positions = jump_positions[0]
-        for position in positions:
-            row, _ = position
-            plt.axvline(x=row, color=&#39;red&#39;, linestyle=&#39;--&#39;, label=&quot;Jump&quot;)
-            plt.xlabel(&quot;Time Points&quot;)
-            plt.ylabel(&quot;Values&quot;)
+    <span class="k">if</span> <span class="n">num_columns</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">jump_positions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">position</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Jump&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time Points&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Values&quot;</span><span class="p">)</span>
 
-    else:
-        for col, ax in enumerate(axes):
-            ax.plot(data[:, col], label=f&quot;Column {col}&quot;)
-            positions = jump_positions[col]
-            for position in positions:
-                row, _ = position
-                ax.axvline(x=row, color=&#39;red&#39;, linestyle=&#39;--&#39;, label=&quot;Jump&quot;)
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">col</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">positions</span> <span class="o">=</span> <span class="n">jump_positions</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span>
+                <span class="n">row</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">position</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Jump&quot;</span><span class="p">)</span>
 
-            ax.set_xlabel(&quot;Time Points&quot;)
-            ax.set_ylabel(&quot;Values&quot;)
-            #ax.legend()
-            ax.grid(True)
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time Points&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Values&quot;</span><span class="p">)</span>
+            <span class="c1">#ax.legend()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.show()
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <br/></pre></div>
 </div>
 </div>
@@ -256,9 +254,9 @@ random_data, jump_positions, peak_rows = generate_random_data_with_random_peaks(
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Usage:
-# Assuming you have already generated random_data and jump_positions
-plot_data_in_subplots_with_lines_limited(random_data, jump_positions)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Usage:</span>
+<span class="c1"># Assuming you have already generated random_data and jump_positions</span>
+<span class="n">plot_data_in_subplots_with_lines_limited</span><span class="p">(</span><span class="n">random_data</span><span class="p">,</span> <span class="n">jump_positions</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -277,49 +275,49 @@ plot_data_in_subplots_with_lines_limited(random_data, jump_positions)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Assuming you have generated data and jump_positions using generate_random_data_with_jumps
-combined_jump_positions = [position for positions in jump_positions for position in positions]
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assuming you have generated data and jump_positions using generate_random_data_with_jumps</span>
+<span class="n">combined_jump_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">position</span> <span class="k">for</span> <span class="n">positions</span> <span class="ow">in</span> <span class="n">jump_positions</span> <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">]</span>
 
-# Extract the row positions where jumps occurred
-jump_row_positions = [position[0] for position in combined_jump_positions]
+<span class="c1"># Extract the row positions where jumps occurred</span>
+<span class="n">jump_row_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">combined_jump_positions</span><span class="p">]</span>
 
-# Create a histogram to show where the jump positions were mostly located
-plt.figure(figsize=(12, 6))
-plt.subplot(1, 2, 1)  # Create a subplot on the left
+<span class="c1"># Create a histogram to show where the jump positions were mostly located</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Create a subplot on the left</span>
 
-hist, bins, _ = plt.hist(jump_row_positions, bins=num_rows, color=&#39;skyblue&#39;, alpha=0.7)
-plt.title(&quot;Histogram of Jump Positions&quot;)
-plt.xlabel(&quot;Time Points&quot;)
-plt.ylabel(&quot;Frequency&quot;)
-plt.xlim(0,num_rows-1)
-plt.grid(True)
+<span class="n">hist</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">jump_row_positions</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;skyblue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of Jump Positions&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time Points&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">num_rows</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-# Perform Gaussian kernel density smoothing of the histogram
-plt.subplot(1, 2, 2)  # Create a subplot on the right
+<span class="c1"># Perform Gaussian kernel density smoothing of the histogram</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Create a subplot on the right</span>
 
-# Create a Gaussian kernel density estimate
-if len(jump_row_positions) &gt; 1:
-    my_bandwidth = .01
-    kde = gaussian_kde(jump_row_positions,bw_method=my_bandwidth)
+<span class="c1"># Create a Gaussian kernel density estimate</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jump_row_positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">my_bandwidth</span> <span class="o">=</span> <span class="mf">.01</span>
+    <span class="n">kde</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">jump_row_positions</span><span class="p">,</span><span class="n">bw_method</span><span class="o">=</span><span class="n">my_bandwidth</span><span class="p">)</span>
 
-    x = np.linspace(0, num_rows-1, 100)
-    pdf = kde(x)
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_rows</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">kde</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-    plt.plot(x, pdf, color=&#39;red&#39;, label=&#39;Gaussian Kernel Smoothing&#39;)
-    plt.title(&quot;Gaussian Kernel Smoothing of change-point hotspots&quot;)
-    plt.xlabel(&quot;Time Points&quot;)
-    plt.ylabel(&quot;Density&quot;)
-    plt.grid(True)
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gaussian Kernel Smoothing&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Gaussian Kernel Smoothing of change-point hotspots&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time Points&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-else:
-    plt.plot(range(num_rows),[i*0 for i in range(num_rows)], color=&#39;red&#39;, label=&#39;Gaussian Kernel Smoothing&#39;)
-    plt.title(&quot;Gaussian Kernel Smoothing of change-point hotspots&quot;)
-    plt.xlabel(&quot;Time Points&quot;)
-    plt.ylabel(&quot;Density&quot;)
-    plt.grid(True)
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">),[</span><span class="n">i</span><span class="o">*</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">)],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gaussian Kernel Smoothing&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Gaussian Kernel Smoothing of change-point hotspots&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time Points&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-plt.tight_layout(w_pad=4)
-plt.show()
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">w_pad</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -335,7 +333,7 @@ plt.show()
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(&#39;The randomly generated change-point hotspot times were: &#39;, np.sort(peak_rows))
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The randomly generated change-point hotspot times were: &#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">peak_rows</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -355,11 +353,11 @@ The randomly generated change-point hotspot times were:  [ 54 491 586 627 983]
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>my_data = random_data
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_data</span> <span class="o">=</span> <span class="n">random_data</span>
 
-detected_change_points, interval_end_points = kcp_ds(my_data, expected_frac_anomaly=15/1000)
+<span class="n">detected_change_points</span><span class="p">,</span> <span class="n">interval_end_points</span> <span class="o">=</span> <span class="n">kcp_ds</span><span class="p">(</span><span class="n">my_data</span><span class="p">,</span> <span class="n">expected_frac_anomaly</span><span class="o">=</span><span class="mi">15</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
 
-print(&#39;The detected change-points are at times: &#39;, detected_change_points)
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The detected change-points are at times: &#39;</span><span class="p">,</span> <span class="n">detected_change_points</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -380,7 +378,7 @@ The detected change-points are at times:  [61, 202, 339, 491, 586, 673, 796, 946
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>rpt.display(my_data[:, 0:min(10, np.shape(my_data)[1])], detected_change_points)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rpt</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">my_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">my_data</span><span class="p">)[</span><span class="mi">1</span><span class="p">])],</span> <span class="n">detected_change_points</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -425,9 +423,9 @@ crash the memory capacity you are working with on your particular PC or server.<
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>true_times = range(0,np.shape(my_data)[0])
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">true_times</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">my_data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
-kcp_v(my_data, true_times, detected_change_points, interval_end_points)
+<span class="n">kcp_v</span><span class="p">(</span><span class="n">my_data</span><span class="p">,</span> <span class="n">true_times</span><span class="p">,</span> <span class="n">detected_change_points</span><span class="p">,</span> <span class="n">interval_end_points</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

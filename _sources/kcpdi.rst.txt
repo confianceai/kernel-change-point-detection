@@ -9,37 +9,37 @@ kcpdi.kcp\_ds module
 
 .. automodule:: kcpdi.kcp_ds
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 kcpdi.kcp\_ss\_learner module
 -----------------------------
 
 .. automodule:: kcpdi.kcp_ss_learner
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 kcpdi.kcp\_v module
 -------------------
 
 .. automodule:: kcpdi.kcp_v
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 kcpdi.utils module
 ------------------
 
 .. automodule:: kcpdi.utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: kcpdi
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
