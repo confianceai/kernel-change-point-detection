@@ -16,18 +16,31 @@
     </a>
 </div>
 <br>
+<div align="center">
+    <a href="https://github.com/confianceai/kernel-change-point-detection">
+        <img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub">
+    </a>
+    <a href="https://confianceai.github.io/kernel-change-point-detection/">
+        <img src="https://img.shields.io/badge/Online%20Documentation-available-0A66C2?logo=readthedocs&logoColor=white" alt="Docs">
+    </a>
+    <a href="https://pypi.org/project/kcpdi/">
+        <img src="https://img.shields.io/pypi/v/kcpdi?color=blue&label=PyPI&logo=pypi&logoColor=white" alt="PyPI">
+    </a>
+</div>
+
+<br>
 
 
 Kernel change point detection is a python library used for anomaly detection on time-series.
 
 ## Getting started
 
-To utilize this library, ensure that you have Python 3.9 or a later version installed.
+This library has been tested on Python 3.11 and 3.12.
 
 ### Setting environement
 ```bash
 pip install virtualenv
-virtualenv -p <path/to/python3.10> myenv
+virtualenv -p <path/to/python3.11> myenv
 source myenv/bin/activate
 ```
 ### Installation
@@ -59,28 +72,33 @@ The following [notebook](examples/Example.ipynb) incorporates the most important
 
 In order to allow the kernel change-point method to be integrated into a Python package based around score samples, we have implemented a function **kcp_ss** which takes the **kcp_ds** output list of change-points and turns them into scores at **all time indices**.
 
-<p>We give a score of 1 at each detected change-point. Then, we define a decay_parameter <em>γ</em> (default <em>γ = 1</em>). Then,</p>
+We give a score of 1 at each detected change-point. We define a decay_parameter $γ$ (default $γ = 1$). Then :
 
-<ul>
-  <li>For any time index that exactly corresponds to a detected change-point index, its score is 1.</li>
-  
-  <li>For any time index <em>t<sub>*</sub></em> before the first detected change-point time index <em>t<sub>1</sub></em>, its score is 
-    <p>$$\left(\frac{1}{2}\right)^{\gamma |t_1 - t_*|}$$</p></li>
-  
-  <li>For any time index <em>t<sub>*</sub></em> after the last detected change-point time index <em>t<sub>last</sub></em>, its score is 
-    <p>$$\left(\frac{1}{2}\right)^{\gamma |t_{last} - t_*|}$$</p></li>
-  
-  <li>For any time index <em>t<sub>*</sub></em> between change-point time indices <em>t<sub>j</sub></em> and <em>t<sub>j+1</sub></em>, its score is the average of the left and right scores:
-    <p>$$\frac{1}{2}\left( \left(\frac{1}{2}\right)^{\gamma |t_{j} - t_*|} + \left(\frac{1}{2}\right)^{\gamma |t_{j+1} - t_*|} \right)$$</p></li>
-</ul>
+- For any time index that exactly corresponds to a detected change-point index, its score is 1.
+
+- For any time index $t_*$ before the first detected change-point time index $t_1$, its score is :
+
+ $$\left(\frac{1}{2}\right)^{\gamma |t_1 - t_*|}$$
+
+- For any time index $t_*$ after the last detected change-point time index $t_{last}$ its score is : 
+
+$$\left(\frac{1}{2}\right)^{\gamma |t_{last} - t_*|}$$
+
+- For any time index $t_*$ between change-point time indices $t,j$ and $_{j+1}$ , its score is the average of the left and right scores : 
+
+$$\frac{1}{2}\left( \left(\frac{1}{2}\right)^{\gamma |t_{j} - t_{*}|} + \left(\frac{1}{2}\right)^{\gamma |t_{j+1} - t_{*}|} \right) $$
+
+
+
 
 ## Contributors and Support
 
 Responsible : **Kevin Bleakley, Sylvain Arlot (INRIA)**
 
 <p align="center">
-  Kernel change point detection is a library developped by INRIA and supported by the  
+  Kernel change point detection is a library developed by INRIA and supported by the  
   <a href="https://www.confiance.ai/" title="Confiance.ai">
    <img src="https://www.trustworthy-ai-foundation.eu/wp-content/uploads/2025/07/M0302_LOGO-ETAIA_RVB_2000px.png"  height="70">
   </a>
 </p>
+
