@@ -84,9 +84,13 @@ We give a score of 1 at each detected change-point. We define a decay_parameter 
 
 $$\left(\frac{1}{2}\right)^{\gamma |t_{last} - t_*|}$$
 
-- For any time index $t_*$ between change-point time indices $t,j$ and $_{j+1}$ , its score is the average of the left and right scores : 
+- For any time index $t_x$ between change-point time indices $t,j$ and $_{j+1}$ , its score is the average of the left and right scores : 
 
-$$\frac{1}{2}\left( \left(\frac{1}{2}\right)^{\gamma |t_{j} - t_{*}|} + \left(\frac{1}{2}\right)^{\gamma |t_{j+1} - t_{*}|} \right) $$
+$$ \frac{1}{2}\left(\left(\frac{1}{2}\right)^{\gamma |t_j - t_{x}|} + \left(\frac{1}{2}\right)^{\gamma |t_{j+1}-t_{x}|} \right) $$
+
+
+
+
 
 
 
