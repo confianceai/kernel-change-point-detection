@@ -17,6 +17,8 @@
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -83,11 +85,11 @@
              
   <section id="guideline">
 <span id="guidelines"></span><h1>💡 Guideline<a class="headerlink" href="#guideline" title="Link to this heading"></a></h1>
-<p>To utilize this library, ensure that you have Python 3.9 or a later version installed.</p>
+<p>This library has been tested on Python 3.11 and 3.12.</p>
 <section id="setting-environement">
 <h2>Setting environement<a class="headerlink" href="#setting-environement" title="Link to this heading"></a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
-virtualenv<span class="w"> </span>-p<span class="w"> </span>&lt;path/to/python3.10&gt;<span class="w"> </span>myenv
+virtualenv<span class="w"> </span>-p<span class="w"> </span>&lt;path/to/python3.11&gt;<span class="w"> </span>myenv
 <span class="nb">source</span><span class="w"> </span>myenv/bin/activate
 </pre></div>
 </div>
@@ -117,16 +119,23 @@ The method is based on results in Arlot et al. (2019).</p>
 <section id="tadkit-link">
 <h2>TADkit link<a class="headerlink" href="#tadkit-link" title="Link to this heading"></a></h2>
 <p>In order to allow the kernel change-point method to be integrated into a Python package based around score samples, we have implemented a function <strong>kcp_ss</strong> which takes the <strong>kcp_ds</strong> output list of change-points and turns them into scores at <strong>all time indices</strong>.</p>
-<p>We give a score of 1 at each detected change-point. Then, we define a decay_parameter <em>γ</em> (default <em>γ = 1</em>). Then,</p>
-<ul>
-  <li>For any time index that exactly corresponds to a detected change-point index, its score is 1.</li>
-  <li>For any time index <em>t<sub>*</sub></em> before the first detected change-point time index <em>t<sub>1</sub></em>, its score is
-    <p>$$\left(\frac{1}{2}\right)^{\gamma |t_1 - t_*|}$$</p></li>
-  <li>For any time index <em>t<sub>*</sub></em> after the last detected change-point time index <em>t<sub>last</sub></em>, its score is
-    <p>$$\left(\frac{1}{2}\right)^{\gamma |t_{last} - t_*|}$$</p></li>
-  <li>For any time index <em>t<sub>*</sub></em> between change-point time indices <em>t<sub>j</sub></em> and <em>t<sub>j+1</sub></em>, its score is the average of the left and right scores:
-    <p>$$\frac{1}{2}\left( \left(\frac{1}{2}\right)^{\gamma |t_{j} - t_*|} + \left(\frac{1}{2}\right)^{\gamma |t_{j+1} - t_*|} \right)$$</p></li>
+<p>We give a score of 1 at each detected change-point. We define a decay_parameter <span class="math notranslate nohighlight">\(γ\)</span> (default <span class="math notranslate nohighlight">\(γ = 1\)</span>). Then :</p>
+<ul class="simple">
+<li><p>For any time index that exactly corresponds to a detected change-point index, its score is 1.</p></li>
+<li><p>For any time index <span class="math notranslate nohighlight">\(t_x\)</span> before the first detected change-point time index <span class="math notranslate nohighlight">\(t_1\)</span>, its score is :</p></li>
 </ul>
+<div class="math notranslate nohighlight">
+\[\left(\frac{1}{2}\right)^{\gamma |t_1 - t_x|}\]</div>
+<ul class="simple">
+<li><p>For any time index <span class="math notranslate nohighlight">\(t_x\)</span> after the last detected change-point time index <span class="math notranslate nohighlight">\(t_{last}\)</span> its score is :</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\left(\frac{1}{2}\right)^{\gamma |t_{last} - t_x|}\]</div>
+<ul class="simple">
+<li><p>For any time index <span class="math notranslate nohighlight">\(t_x\)</span> between change-point time indices <span class="math notranslate nohighlight">\(t,j\)</span> and <span class="math notranslate nohighlight">\(_{j+1}\)</span> , its score is the average of the left and right scores :</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ \frac{1}{2}\left(\left(\frac{1}{2}\right)^{\gamma |t_j - t_{x}|} + \left(\frac{1}{2}\right)^{\gamma |t_{j+1}-t_{x}|} \right) \]</div>
 </section>
 </section>
 
