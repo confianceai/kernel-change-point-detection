@@ -17,7 +17,6 @@ Note: Please handle real-world times associated with the data independently as t
 on change point detection and variable selection.
 """
 
-
 from typing import Any, Dict, List, Literal, Optional, Sequence, Tuple
 import math
 
@@ -34,7 +33,7 @@ def kcp_ds(
     params: Optional[Dict[str, Any]] = None,
     max_n_time_points: int = 2000,
     min_n_time_points: int = 10,
-    expected_frac_anomaly: float = 1/1000,
+    expected_frac_anomaly: float = 1 / 1000,
 ) -> Tuple[List[int], List[int]]:
     """Return a set of important change points change points after
     running kernel change point detection followed by penalized model
@@ -43,7 +42,7 @@ def kcp_ds(
     Since the criterion is responding to noise/overfitting, penalized
     variable selection is performed in order to obtain a final decision
     as to how many of the detected change points are truly significant
-    and not simply adjusted noise. 
+    and not simply adjusted noise.
 
     Args:
         data: array of dimension (number of time points) x (number of
@@ -60,20 +59,16 @@ def kcp_ds(
             algorithm again. If there are fewer than min_n_time_points
             points in the dataset, no computations will be run and the
             outputs will be empty.
-        expected_frac_anomaly: This parameter encodes prior knowledge 
+        expected_frac_anomaly: This parameter encodes prior knowledge
             of users as to how often anomalies might occur. Results can
-            be quite dependent on the choice of this parameter, so 
+            be quite dependent on the choice of this parameter, so
             choose carefully!
     """
     if max_n_time_points < min_n_time_points:
-        raise ValueError(
-            "max_n_time_points should be greater than min_n_time_points."
-        )
-        
-    if expected_frac_anomaly > 1/2:
-        raise ValueError(
-            "expected_frac_anomaly should be at most 1/2."
-        )
+        raise ValueError("max_n_time_points should be greater than min_n_time_points.")
+
+    if expected_frac_anomaly > 1 / 2:
+        raise ValueError("expected_frac_anomaly should be at most 1/2.")
 
     n_total_time_points = np.shape(data)[0]
 
@@ -93,10 +88,7 @@ def kcp_ds(
 
     while curr_n_remaining_t_points > max_n_time_points:
         # Get the block of data to plug into the Ruptures setting:
-        data_use = current_data[
-            :max_n_time_points,
-            :
-        ]
+        data_use = current_data[:max_n_time_points, :]
 
         # Store the true index of the time point at the end of this interval, which will be needed
         # in the explainability function later:
@@ -113,21 +105,18 @@ def kcp_ds(
 
         # Concatenate any current data rows left after the last change point found, to the
         # remaining data (if there is any left):
-        current_data = data[(next_ch_pts[-1]-1):, :]
+        current_data = data[(next_ch_pts[-1] - 1):, :]
 
         current_zero = next_ch_pts[-1] - 1
 
         n_current_time_points = np.shape(current_data)[0]
         curr_n_remaining_t_points = n_current_time_points
 
-    # Deal with any residual block of data that is shorter than (or equal to) 
-    #max_n_time_points but still larger than min_n_time_points:
-    if (
-        curr_n_remaining_t_points <= max_n_time_points
-    ) & (
+    # Deal with any residual block of data that is shorter than (or equal to)
+    # max_n_time_points but still larger than min_n_time_points:
+    if (curr_n_remaining_t_points <= max_n_time_points) & (
         curr_n_remaining_t_points >= min_n_time_points
     ):
-
         # Store the true index of the time point at the end of this interval, which will be needed
         # in the explainability function later. Unlike in the above while loop, here the time point
         # at the end of the interval is the last time point in the dataset:
@@ -141,13 +130,21 @@ def kcp_ds(
             current_zero=current_zero,
             detected_change_points=detected_change_points,
         )
-        
-    #We need to remove any "detected" change-points which were actually ends of intervals.
-    #First we add 1 to each detected_change_point:
-    temp_detec = [detected_change_points[i] + 1 for i in range(len(detected_change_points))]
-    #Now look for matches with values in "interval_end_points"
-    index_matches = [i for i in range(len(detected_change_points)) if temp_detec[i] in interval_end_points]
-    detected_change_points = [i for j, i in enumerate(detected_change_points) if j not in index_matches]
+
+    # We need to remove any "detected" change-points which were actually ends of intervals.
+    # First we add 1 to each detected_change_point:
+    temp_detec = [
+        detected_change_points[i] + 1 for i in range(len(detected_change_points))
+    ]
+    # Now look for matches with values in "interval_end_points"
+    index_matches = [
+        i
+        for i in range(len(detected_change_points))
+        if temp_detec[i] in interval_end_points
+    ]
+    detected_change_points = [
+        i for j, i in enumerate(detected_change_points) if j not in index_matches
+    ]
 
     return detected_change_points, interval_end_points
 
@@ -172,11 +169,11 @@ def _detect_changepoints_from_kernelcpd(
             positive real value.
         params: parameters for the kernel instance
         data_use: chunk of data on which to apply the detection
-        expected_frac_anomaly: This parameter encodes prior knowledge 
+        expected_frac_anomaly: This parameter encodes prior knowledge
             of users as to how often anomalies might occur. Results can
-            be quite dependent on the choice of this parameter, so 
+            be quite dependent on the choice of this parameter, so
             choose carefully!
-        current_zero: index of the first point of the current chunk of 
+        current_zero: index of the first point of the current chunk of
             the dataset
         detected_change_points: all breakpoints detected so far
 
@@ -187,29 +184,30 @@ def _detect_changepoints_from_kernelcpd(
     # Associate the data with the class KernelCPD from the Ruptures library:
     algo = rpt.KernelCPD(kernel=kernel, params=params)
     algo.fit(data_use)
-    
-    #Get a value for the maximum number of change-points to look for; essentially,
-    #this is set as = 2 * fraction of expected anomalies * number of current time points.
-    n_bkps_max = max( 1, int(2*np.floor(expected_frac_anomaly*np.shape(data_use)[0])) )
-    
+
+    # Get a value for the maximum number of change-points to look for; essentially,
+    # this is set as = 2 * fraction of expected anomalies * number of current time points.
+    n_bkps_max = max(
+        1, int(2 * np.floor(expected_frac_anomaly * np.shape(data_use)[0]))
+    )
+
     array_of_n_bkps = np.arange(1, n_bkps_max + 1)
     algo_costs = [
-        get_sum_of_cost(algo=algo, n_bkps=n_bkps)
-        for n_bkps in array_of_n_bkps
+        get_sum_of_cost(algo=algo, n_bkps=n_bkps) for n_bkps in array_of_n_bkps
     ]  # value of the criterion for when we have chosen to stick with 1 up to n_bkps_max points
     # Since each time we add an extra change point, the criterion will never decrease:
     # algo_costs is a non-increasing list.
-    
-    #For the linear kernel we want to concatenate onto the FRONT of this list the value of the
-    #criterion when there are ZERO change-points. The problem is that the ruptures package 
-    #assumes that there is at least one change-point, while the model selection of Arlot et al
-    #(2019) includes the case when there are ZERO change-points. We emphasize that the matrix
-    #multiplication below is only for the linear kernel.
-    linear_prod = np.dot(data_use,data_use.T)
-    diag_sum = np.sum([linear_prod[i,i] for i in range(np.shape(data_use)[0])])
+
+    # For the linear kernel we want to concatenate onto the FRONT of this list the value of the
+    # criterion when there are ZERO change-points. The problem is that the ruptures package
+    # assumes that there is at least one change-point, while the model selection of Arlot et al
+    # (2019) includes the case when there are ZERO change-points. We emphasize that the matrix
+    # multiplication below is only for the linear kernel.
+    linear_prod = np.dot(data_use, data_use.T)
+    diag_sum = np.sum([linear_prod[i, i] for i in range(np.shape(data_use)[0])])
     crit_linear_zero_cp = diag_sum - np.mean(linear_prod)
-    #Concatenate this value onto the FRONT of the algo_costs list:
-    algo_costs.insert(0,crit_linear_zero_cp)
+    # Concatenate this value onto the FRONT of the algo_costs list:
+    algo_costs.insert(0, crit_linear_zero_cp)
 
     n_bkps_pen = _model_select_n_bp(
         data=data_use,
@@ -217,22 +215,22 @@ def _detect_changepoints_from_kernelcpd(
         array_of_n_bkps=array_of_n_bkps,
         n_bkps_max=n_bkps_max,
     )  # penalized selection
-    
+
     # Extract the solution:
     if n_bkps_pen > 0:
         next_ch_pts = algo.predict(n_bkps=n_bkps_pen)
         # Remove the end point, which itself is not an endpoint:
         del next_ch_pts[-1]
-    else: 
-        #If there were NO change-points detected, by convention we shall 
-        #instead output the end-point index of the interval AS IF it were
-        #a change-point. Note that this (index + 1) was also already stored in
-        #the variable "interval_end_points" so we will be able to weed out
-        #this change-point at the end for the final list and for the
-        #eventual visualization steps.
+    else:
+        # If there were NO change-points detected, by convention we shall
+        # instead output the end-point index of the interval AS IF it were
+        # a change-point. Note that this (index + 1) was also already stored in
+        # the variable "interval_end_points" so we will be able to weed out
+        # this change-point at the end for the final list and for the
+        # eventual visualization steps.
         next_ch_pts = algo.predict(n_bkps=1)
-        next_ch_pts = [next_ch_pts[-1]-1]
-    
+        next_ch_pts = [next_ch_pts[-1] - 1]
+
     # Add the current zero index (in order to get the true row/time point in the data):
     next_ch_pts = [x + current_zero for x in next_ch_pts]
 
@@ -271,46 +269,48 @@ def _model_select_n_bp(
         using the slope heuristic method in Arlot et al. (2019).
     """
     lower_D = math.ceil(0.6 * n_bkps_max)
-    
+
     X1 = [
-        (1/np.shape(data)[0])*math.log(math.comb(np.shape(data)[0] - 1, D - 1))
+        (1 / np.shape(data)[0]) * math.log(math.comb(np.shape(data)[0] - 1, D - 1))
         for D in np.arange(lower_D, n_bkps_max + 1)
     ]
-    X2 = [(1/np.shape(data)[0])*D for D in np.arange(lower_D, n_bkps_max + 1)]
-    
+    X2 = [(1 / np.shape(data)[0]) * D for D in np.arange(lower_D, n_bkps_max + 1)]
+
     X = np.transpose(np.array([X1, X2]))
-    y = np.array([(1/np.shape(data)[0])*algo_costs[D - 1]
-                 for D in np.arange(lower_D, n_bkps_max + 1)])
+    y = np.array(
+        [
+            (1 / np.shape(data)[0]) * algo_costs[D - 1]
+            for D in np.arange(lower_D, n_bkps_max + 1)
+        ]
+    )
     #
-    ## Linear regression:
+    # Linear regression:
     algo_reg = LinearRegression().fit(X, y)
     s1_hat = algo_reg.coef_[0]
     s2_hat = algo_reg.coef_[1]
-     
+
     ###########################################################
-    
+
     # Final parameters:
     c1 = -2 * s1_hat
     c2 = -2 * s2_hat
 
-    # Use these two parameters to do the model selection in Arlot et al. (2019):         
-    
+    # Use these two parameters to do the model selection in Arlot et al. (2019):
+
     algo_pen = [
-        algo_costs[i-1]
-        +
-        c1 * math.log(math.comb(np.shape(data)[0] - 1, i - 1))
-        +
-        c2 * i
+        algo_costs[i - 1]
+        + c1 * math.log(math.comb(np.shape(data)[0] - 1, i - 1))
+        + c2 * i
         for i in array_of_n_bkps
     ]
-    
+
     min_val = min(algo_pen)
     all_min_indices = [i for i, x in enumerate(algo_pen) if x == min_val]
 
     # There could be more than one items in this object. We choose the smallest for parcimony
     # reasons in this (unlikely) event:
     min_index = all_min_indices[0]
-    
+
     n_bkps_pen = min_index
 
     return n_bkps_pen

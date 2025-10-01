@@ -1,6 +1,6 @@
-sphinx
-sphinx_autodoc_typehints
-sphinx-rtd-theme
-myst_parser
-nbsphinx
+sphinx==8.2.3
+sphinx_autodoc_typehints==3.2.0
+sphinx-rtd-theme==3.0.2
+myst_parser==4.0.1
+nbsphinx==0.9.6
 pandoc==2.4

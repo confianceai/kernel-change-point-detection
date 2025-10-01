@@ -12,20 +12,20 @@ sys.path.insert(0, os.path.abspath("../../kcpdi"))
 project = 'Kernel-change-point-detection'
 copyright = '2025, INRIA'
 author = 'Kevin Bleakley'
-release = '0.1.0'
+release = '0.1.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [ "sphinx.ext.githubpages","sphinx.ext.todo", "sphinx.ext.viewcode", "sphinx.ext.autodoc", "sphinx.ext.napoleon",
-              "myst_parser", "nbsphinx"]
+extensions = ["sphinx.ext.githubpages", "sphinx.ext.todo", "sphinx.ext.viewcode", "sphinx.ext.autodoc",
+              "sphinx.ext.napoleon", "myst_parser", "nbsphinx"]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 myst_enable_extensions = [
     "amsmath",    # supporte $$...$$
-    "dollarmath" # supporte $...$
+    "dollarmath"  # supporte $...$
 ]
 
 # -- Options for HTML output -------------------------------------------------

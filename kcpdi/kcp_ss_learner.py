@@ -4,10 +4,10 @@ perform anomaly scoring as understood in the TADkit formalism, based on this lib
 detection methodology.
 
 The kernel change-point detection algorithm outputs a final list of time indices at which it thinks
-that "something happened". 
+that "something happened".
 
 Other methods output a score at __all__ time indices, where the higher the score is, the more we
-believe that "something happened there". 
+believe that "something happened there".
 
 In order to allow the kernel change-point method to be integrated into a Python package based
 around score samples, we have implemented a function __kcp_ss__ which takes the __kcp_ds__ output
@@ -76,10 +76,10 @@ class KcpLearner(BaseEstimator, OutlierMixin):
         point from 0 (low probability of an anomaly at the time point)
         to 1 (high probability of an anomaly at the time point).
 
-        Args:   
+        Args:
             detected_change_points: The detected change-points. It
                 should be the first output of the kcp_ds function.
-            n_time_points: The number of time points in the input data. 
+            n_time_points: The number of time points in the input data.
                 Usually this will be something like: np.shape(data)[0].
             decay_param: Parameter that defines how fast the score
                 decays around the change-points. The larger this value,
@@ -135,8 +135,8 @@ class KcpLearner(BaseEstimator, OutlierMixin):
                 curr_dist_left = abs(i - detected_change_points[n_left - 1])
                 curr_dist_right = abs(i - detected_change_points[n_left])
                 kcp_scores[i] = (1 / 2) * (
-                        (1 / 2) ** (curr_dist_left * decay_param) +
-                        (1 / 2) ** (curr_dist_right * decay_param)
+                    (1 / 2) ** (curr_dist_left * decay_param) +
+                    (1 / 2) ** (curr_dist_right * decay_param)
                 )
 
         return kcp_scores
