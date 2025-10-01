@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>kcpdi.kcp_ds &mdash; Kernel-change-point-detection 0.1.0 documentation</title>
+  <title>kcpdi.kcp_ds &mdash; Kernel-change-point-detection 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=a58bc63e"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -91,7 +91,6 @@
 <span class="sd">on change point detection and variable selection.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 
@@ -110,7 +109,7 @@
     <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_n_time_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
     <span class="n">min_n_time_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="n">expected_frac_anomaly</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">expected_frac_anomaly</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a set of important change points change points after</span>
 <span class="sd">    running kernel change point detection followed by penalized model</span>
@@ -119,7 +118,7 @@
 <span class="sd">    Since the criterion is responding to noise/overfitting, penalized</span>
 <span class="sd">    variable selection is performed in order to obtain a final decision</span>
 <span class="sd">    as to how many of the detected change points are truly significant</span>
-<span class="sd">    and not simply adjusted noise. </span>
+<span class="sd">    and not simply adjusted noise.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data: array of dimension (number of time points) x (number of</span>
@@ -136,20 +135,16 @@
 <span class="sd">            algorithm again. If there are fewer than min_n_time_points</span>
 <span class="sd">            points in the dataset, no computations will be run and the</span>
 <span class="sd">            outputs will be empty.</span>
-<span class="sd">        expected_frac_anomaly: This parameter encodes prior knowledge </span>
+<span class="sd">        expected_frac_anomaly: This parameter encodes prior knowledge</span>
 <span class="sd">            of users as to how often anomalies might occur. Results can</span>
-<span class="sd">            be quite dependent on the choice of this parameter, so </span>
+<span class="sd">            be quite dependent on the choice of this parameter, so</span>
 <span class="sd">            choose carefully!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">max_n_time_points</span> <span class="o">&lt;</span> <span class="n">min_n_time_points</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;max_n_time_points should be greater than min_n_time_points.&quot;</span>
-        <span class="p">)</span>
-        
-    <span class="k">if</span> <span class="n">expected_frac_anomaly</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;expected_frac_anomaly should be at most 1/2.&quot;</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_n_time_points should be greater than min_n_time_points.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">expected_frac_anomaly</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;expected_frac_anomaly should be at most 1/2.&quot;</span><span class="p">)</span>
 
     <span class="n">n_total_time_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -169,10 +164,7 @@
 
     <span class="k">while</span> <span class="n">curr_n_remaining_t_points</span> <span class="o">&gt;</span> <span class="n">max_n_time_points</span><span class="p">:</span>
         <span class="c1"># Get the block of data to plug into the Ruptures setting:</span>
-        <span class="n">data_use</span> <span class="o">=</span> <span class="n">current_data</span><span class="p">[</span>
-            <span class="p">:</span><span class="n">max_n_time_points</span><span class="p">,</span>
-            <span class="p">:</span>
-        <span class="p">]</span>
+        <span class="n">data_use</span> <span class="o">=</span> <span class="n">current_data</span><span class="p">[:</span><span class="n">max_n_time_points</span><span class="p">,</span> <span class="p">:]</span>
 
         <span class="c1"># Store the true index of the time point at the end of this interval, which will be needed</span>
         <span class="c1"># in the explainability function later:</span>
@@ -189,21 +181,18 @@
 
         <span class="c1"># Concatenate any current data rows left after the last change point found, to the</span>
         <span class="c1"># remaining data (if there is any left):</span>
-        <span class="n">current_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="n">next_ch_pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):,</span> <span class="p">:]</span>
+        <span class="n">current_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="n">next_ch_pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):,</span> <span class="p">:]</span>
 
         <span class="n">current_zero</span> <span class="o">=</span> <span class="n">next_ch_pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
 
         <span class="n">n_current_time_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">current_data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">curr_n_remaining_t_points</span> <span class="o">=</span> <span class="n">n_current_time_points</span>
 
-    <span class="c1"># Deal with any residual block of data that is shorter than (or equal to) </span>
-    <span class="c1">#max_n_time_points but still larger than min_n_time_points:</span>
-    <span class="k">if</span> <span class="p">(</span>
-        <span class="n">curr_n_remaining_t_points</span> <span class="o">&lt;=</span> <span class="n">max_n_time_points</span>
-    <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
+    <span class="c1"># Deal with any residual block of data that is shorter than (or equal to)</span>
+    <span class="c1"># max_n_time_points but still larger than min_n_time_points:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">curr_n_remaining_t_points</span> <span class="o">&lt;=</span> <span class="n">max_n_time_points</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
         <span class="n">curr_n_remaining_t_points</span> <span class="o">&gt;=</span> <span class="n">min_n_time_points</span>
     <span class="p">):</span>
-
         <span class="c1"># Store the true index of the time point at the end of this interval, which will be needed</span>
         <span class="c1"># in the explainability function later. Unlike in the above while loop, here the time point</span>
         <span class="c1"># at the end of the interval is the last time point in the dataset:</span>
@@ -217,13 +206,21 @@
             <span class="n">current_zero</span><span class="o">=</span><span class="n">current_zero</span><span class="p">,</span>
             <span class="n">detected_change_points</span><span class="o">=</span><span class="n">detected_change_points</span><span class="p">,</span>
         <span class="p">)</span>
-        
-    <span class="c1">#We need to remove any &quot;detected&quot; change-points which were actually ends of intervals.</span>
-    <span class="c1">#First we add 1 to each detected_change_point:</span>
-    <span class="n">temp_detec</span> <span class="o">=</span> <span class="p">[</span><span class="n">detected_change_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">))]</span>
-    <span class="c1">#Now look for matches with values in &quot;interval_end_points&quot;</span>
-    <span class="n">index_matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">))</span> <span class="k">if</span> <span class="n">temp_detec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">interval_end_points</span><span class="p">]</span>
-    <span class="n">detected_change_points</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index_matches</span><span class="p">]</span>
+
+    <span class="c1"># We need to remove any &quot;detected&quot; change-points which were actually ends of intervals.</span>
+    <span class="c1"># First we add 1 to each detected_change_point:</span>
+    <span class="n">temp_detec</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">detected_change_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">))</span>
+    <span class="p">]</span>
+    <span class="c1"># Now look for matches with values in &quot;interval_end_points&quot;</span>
+    <span class="n">index_matches</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">i</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">temp_detec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">interval_end_points</span>
+    <span class="p">]</span>
+    <span class="n">detected_change_points</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">i</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">detected_change_points</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index_matches</span>
+    <span class="p">]</span>
 
     <span class="k">return</span> <span class="n">detected_change_points</span><span class="p">,</span> <span class="n">interval_end_points</span></div>
 
@@ -249,11 +246,11 @@
 <span class="sd">            positive real value.</span>
 <span class="sd">        params: parameters for the kernel instance</span>
 <span class="sd">        data_use: chunk of data on which to apply the detection</span>
-<span class="sd">        expected_frac_anomaly: This parameter encodes prior knowledge </span>
+<span class="sd">        expected_frac_anomaly: This parameter encodes prior knowledge</span>
 <span class="sd">            of users as to how often anomalies might occur. Results can</span>
-<span class="sd">            be quite dependent on the choice of this parameter, so </span>
+<span class="sd">            be quite dependent on the choice of this parameter, so</span>
 <span class="sd">            choose carefully!</span>
-<span class="sd">        current_zero: index of the first point of the current chunk of </span>
+<span class="sd">        current_zero: index of the first point of the current chunk of</span>
 <span class="sd">            the dataset</span>
 <span class="sd">        detected_change_points: all breakpoints detected so far</span>
 
@@ -264,29 +261,30 @@
     <span class="c1"># Associate the data with the class KernelCPD from the Ruptures library:</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">rpt</span><span class="o">.</span><span class="n">KernelCPD</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
     <span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data_use</span><span class="p">)</span>
-    
-    <span class="c1">#Get a value for the maximum number of change-points to look for; essentially,</span>
-    <span class="c1">#this is set as = 2 * fraction of expected anomalies * number of current time points.</span>
-    <span class="n">n_bkps_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">expected_frac_anomaly</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data_use</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">)</span>
-    
+
+    <span class="c1"># Get a value for the maximum number of change-points to look for; essentially,</span>
+    <span class="c1"># this is set as = 2 * fraction of expected anomalies * number of current time points.</span>
+    <span class="n">n_bkps_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">expected_frac_anomaly</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data_use</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="p">)</span>
+
     <span class="n">array_of_n_bkps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_bkps_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">algo_costs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">get_sum_of_cost</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="n">algo</span><span class="p">,</span> <span class="n">n_bkps</span><span class="o">=</span><span class="n">n_bkps</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">n_bkps</span> <span class="ow">in</span> <span class="n">array_of_n_bkps</span>
+        <span class="n">get_sum_of_cost</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="n">algo</span><span class="p">,</span> <span class="n">n_bkps</span><span class="o">=</span><span class="n">n_bkps</span><span class="p">)</span> <span class="k">for</span> <span class="n">n_bkps</span> <span class="ow">in</span> <span class="n">array_of_n_bkps</span>
     <span class="p">]</span>  <span class="c1"># value of the criterion for when we have chosen to stick with 1 up to n_bkps_max points</span>
     <span class="c1"># Since each time we add an extra change point, the criterion will never decrease:</span>
     <span class="c1"># algo_costs is a non-increasing list.</span>
-    
-    <span class="c1">#For the linear kernel we want to concatenate onto the FRONT of this list the value of the</span>
-    <span class="c1">#criterion when there are ZERO change-points. The problem is that the ruptures package </span>
-    <span class="c1">#assumes that there is at least one change-point, while the model selection of Arlot et al</span>
-    <span class="c1">#(2019) includes the case when there are ZERO change-points. We emphasize that the matrix</span>
-    <span class="c1">#multiplication below is only for the linear kernel.</span>
-    <span class="n">linear_prod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data_use</span><span class="p">,</span><span class="n">data_use</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">diag_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">linear_prod</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data_use</span><span class="p">)[</span><span class="mi">0</span><span class="p">])])</span>
+
+    <span class="c1"># For the linear kernel we want to concatenate onto the FRONT of this list the value of the</span>
+    <span class="c1"># criterion when there are ZERO change-points. The problem is that the ruptures package</span>
+    <span class="c1"># assumes that there is at least one change-point, while the model selection of Arlot et al</span>
+    <span class="c1"># (2019) includes the case when there are ZERO change-points. We emphasize that the matrix</span>
+    <span class="c1"># multiplication below is only for the linear kernel.</span>
+    <span class="n">linear_prod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data_use</span><span class="p">,</span> <span class="n">data_use</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">diag_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">linear_prod</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data_use</span><span class="p">)[</span><span class="mi">0</span><span class="p">])])</span>
     <span class="n">crit_linear_zero_cp</span> <span class="o">=</span> <span class="n">diag_sum</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">linear_prod</span><span class="p">)</span>
-    <span class="c1">#Concatenate this value onto the FRONT of the algo_costs list:</span>
-    <span class="n">algo_costs</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">crit_linear_zero_cp</span><span class="p">)</span>
+    <span class="c1"># Concatenate this value onto the FRONT of the algo_costs list:</span>
+    <span class="n">algo_costs</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">crit_linear_zero_cp</span><span class="p">)</span>
 
     <span class="n">n_bkps_pen</span> <span class="o">=</span> <span class="n">_model_select_n_bp</span><span class="p">(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">data_use</span><span class="p">,</span>
@@ -294,22 +292,22 @@
         <span class="n">array_of_n_bkps</span><span class="o">=</span><span class="n">array_of_n_bkps</span><span class="p">,</span>
         <span class="n">n_bkps_max</span><span class="o">=</span><span class="n">n_bkps_max</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># penalized selection</span>
-    
+
     <span class="c1"># Extract the solution:</span>
     <span class="k">if</span> <span class="n">n_bkps_pen</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">next_ch_pts</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">n_bkps</span><span class="o">=</span><span class="n">n_bkps_pen</span><span class="p">)</span>
         <span class="c1"># Remove the end point, which itself is not an endpoint:</span>
         <span class="k">del</span> <span class="n">next_ch_pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span> 
-        <span class="c1">#If there were NO change-points detected, by convention we shall </span>
-        <span class="c1">#instead output the end-point index of the interval AS IF it were</span>
-        <span class="c1">#a change-point. Note that this (index + 1) was also already stored in</span>
-        <span class="c1">#the variable &quot;interval_end_points&quot; so we will be able to weed out</span>
-        <span class="c1">#this change-point at the end for the final list and for the</span>
-        <span class="c1">#eventual visualization steps.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># If there were NO change-points detected, by convention we shall</span>
+        <span class="c1"># instead output the end-point index of the interval AS IF it were</span>
+        <span class="c1"># a change-point. Note that this (index + 1) was also already stored in</span>
+        <span class="c1"># the variable &quot;interval_end_points&quot; so we will be able to weed out</span>
+        <span class="c1"># this change-point at the end for the final list and for the</span>
+        <span class="c1"># eventual visualization steps.</span>
         <span class="n">next_ch_pts</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">n_bkps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">next_ch_pts</span> <span class="o">=</span> <span class="p">[</span><span class="n">next_ch_pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    
+        <span class="n">next_ch_pts</span> <span class="o">=</span> <span class="p">[</span><span class="n">next_ch_pts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
     <span class="c1"># Add the current zero index (in order to get the true row/time point in the data):</span>
     <span class="n">next_ch_pts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">current_zero</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">next_ch_pts</span><span class="p">]</span>
 
@@ -348,46 +346,48 @@
 <span class="sd">        using the slope heuristic method in Arlot et al. (2019).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lower_D</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">0.6</span> <span class="o">*</span> <span class="n">n_bkps_max</span><span class="p">)</span>
-    
+
     <span class="n">X1</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">D</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">D</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">D</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lower_D</span><span class="p">,</span> <span class="n">n_bkps_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="p">]</span>
-    <span class="n">X2</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">D</span> <span class="k">for</span> <span class="n">D</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lower_D</span><span class="p">,</span> <span class="n">n_bkps_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-    
+    <span class="n">X2</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">D</span> <span class="k">for</span> <span class="n">D</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lower_D</span><span class="p">,</span> <span class="n">n_bkps_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
     <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">]))</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">algo_costs</span><span class="p">[</span><span class="n">D</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                 <span class="k">for</span> <span class="n">D</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lower_D</span><span class="p">,</span> <span class="n">n_bkps_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">algo_costs</span><span class="p">[</span><span class="n">D</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">D</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lower_D</span><span class="p">,</span> <span class="n">n_bkps_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
     <span class="c1">#</span>
-    <span class="c1">## Linear regression:</span>
+    <span class="c1"># Linear regression:</span>
     <span class="n">algo_reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">s1_hat</span> <span class="o">=</span> <span class="n">algo_reg</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">s2_hat</span> <span class="o">=</span> <span class="n">algo_reg</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-     
+
     <span class="c1">###########################################################</span>
-    
+
     <span class="c1"># Final parameters:</span>
     <span class="n">c1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">s1_hat</span>
     <span class="n">c2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">s2_hat</span>
 
-    <span class="c1"># Use these two parameters to do the model selection in Arlot et al. (2019):         </span>
-    
+    <span class="c1"># Use these two parameters to do the model selection in Arlot et al. (2019):</span>
+
     <span class="n">algo_pen</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">algo_costs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="o">+</span>
-        <span class="n">c1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="o">+</span>
-        <span class="n">c2</span> <span class="o">*</span> <span class="n">i</span>
+        <span class="n">algo_costs</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">c1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="o">+</span> <span class="n">c2</span> <span class="o">*</span> <span class="n">i</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">array_of_n_bkps</span>
     <span class="p">]</span>
-    
+
     <span class="n">min_val</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">algo_pen</span><span class="p">)</span>
     <span class="n">all_min_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">algo_pen</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">min_val</span><span class="p">]</span>
 
     <span class="c1"># There could be more than one items in this object. We choose the smallest for parcimony</span>
     <span class="c1"># reasons in this (unlikely) event:</span>
     <span class="n">min_index</span> <span class="o">=</span> <span class="n">all_min_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    
+
     <span class="n">n_bkps_pen</span> <span class="o">=</span> <span class="n">min_index</span>
 
     <span class="k">return</span> <span class="n">n_bkps_pen</span>

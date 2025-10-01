@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>kcpdi.kcp_ss_learner &mdash; Kernel-change-point-detection 0.1.0 documentation</title>
+  <title>kcpdi.kcp_ss_learner &mdash; Kernel-change-point-detection 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=a58bc63e"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -78,10 +78,10 @@
 <span class="sd">detection methodology.</span>
 
 <span class="sd">The kernel change-point detection algorithm outputs a final list of time indices at which it thinks</span>
-<span class="sd">that &quot;something happened&quot;. </span>
+<span class="sd">that &quot;something happened&quot;.</span>
 
 <span class="sd">Other methods output a score at __all__ time indices, where the higher the score is, the more we</span>
-<span class="sd">believe that &quot;something happened there&quot;. </span>
+<span class="sd">believe that &quot;something happened there&quot;.</span>
 
 <span class="sd">In order to allow the kernel change-point method to be integrated into a Python package based</span>
 <span class="sd">around score samples, we have implemented a function __kcp_ss__ which takes the __kcp_ds__ output</span>
@@ -155,10 +155,10 @@
 <span class="sd">        point from 0 (low probability of an anomaly at the time point)</span>
 <span class="sd">        to 1 (high probability of an anomaly at the time point).</span>
 
-<span class="sd">        Args:   </span>
+<span class="sd">        Args:</span>
 <span class="sd">            detected_change_points: The detected change-points. It</span>
 <span class="sd">                should be the first output of the kcp_ds function.</span>
-<span class="sd">            n_time_points: The number of time points in the input data. </span>
+<span class="sd">            n_time_points: The number of time points in the input data.</span>
 <span class="sd">                Usually this will be something like: np.shape(data)[0].</span>
 <span class="sd">            decay_param: Parameter that defines how fast the score</span>
 <span class="sd">                decays around the change-points. The larger this value,</span>
@@ -214,8 +214,8 @@
                 <span class="n">curr_dist_left</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">detected_change_points</span><span class="p">[</span><span class="n">n_left</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
                 <span class="n">curr_dist_right</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">detected_change_points</span><span class="p">[</span><span class="n">n_left</span><span class="p">])</span>
                 <span class="n">kcp_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-                        <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist_left</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span> <span class="o">+</span>
-                        <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist_right</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span>
+                    <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist_left</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">curr_dist_right</span> <span class="o">*</span> <span class="n">decay_param</span><span class="p">)</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">kcp_scores</span>
