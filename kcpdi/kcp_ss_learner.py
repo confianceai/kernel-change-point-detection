@@ -22,11 +22,12 @@ We give a score of 1 at each detected change-point. Other points are assigned a 
 decreases as they move away from the detected change-point, in a way parameterized by a decay
 parameter (gamma).
 """
+
 from typing import Any, Dict, List, Literal, Optional, Sequence
 
 from sklearn.base import BaseEstimator, OutlierMixin
 
-from kcpdi import kcp_ds
+from kcpdi.kcp_ds import kcp_ds
 
 import numpy as np
 
@@ -47,13 +48,13 @@ class KcpLearner(BaseEstimator, OutlierMixin):
     }
 
     def __init__(
-            self,
-            kernel: Literal["linear", "cosine", "rbf"] = "linear",
-            params: Optional[Dict[str, Any]] = None,
-            max_n_time_points: int = 2000,
-            min_n_time_points: int = 10,
-            expected_frac_anomaly: float = 1 / 1000,
-            decay_param: float = 1.,
+        self,
+        kernel: Literal["linear", "cosine", "rbf"] = "linear",
+        params: Optional[Dict[str, Any]] = None,
+        max_n_time_points: int = 2000,
+        min_n_time_points: int = 10,
+        expected_frac_anomaly: float = 1 / 1000,
+        decay_param: float = 1.0,
     ):
         self.kernel = kernel
         self.params = params
@@ -67,9 +68,9 @@ class KcpLearner(BaseEstimator, OutlierMixin):
 
     @staticmethod
     def _kcp_ss(
-            detected_change_points: Sequence[int],
-            n_time_points: int,
-            decay_param: float = 1.,
+        detected_change_points: Sequence[int],
+        n_time_points: int,
+        decay_param: float = 1.0,
     ) -> List[float]:
         """Take the output list of detected change-points from the
         function kcp_ds() and transform them into a score at each time
@@ -86,9 +87,7 @@ class KcpLearner(BaseEstimator, OutlierMixin):
                 the faster it decays.
         """
         if decay_param < 0:
-            raise ValueError(
-                "decay_param has to be positive."
-            )
+            raise ValueError("decay_param has to be positive.")
 
         # Create list of 0s of length n_time_points
         kcp_scores = [0] * n_time_points
@@ -97,7 +96,6 @@ class KcpLearner(BaseEstimator, OutlierMixin):
             return kcp_scores
 
         for i in range(n_time_points):
-
             # Cases:
             # 1) i is in the list of change-point indices
             # 2) i is before the first change-point index
@@ -135,8 +133,8 @@ class KcpLearner(BaseEstimator, OutlierMixin):
                 curr_dist_left = abs(i - detected_change_points[n_left - 1])
                 curr_dist_right = abs(i - detected_change_points[n_left])
                 kcp_scores[i] = (1 / 2) * (
-                    (1 / 2) ** (curr_dist_left * decay_param) +
-                    (1 / 2) ** (curr_dist_right * decay_param)
+                    (1 / 2) ** (curr_dist_left * decay_param)
+                    + (1 / 2) ** (curr_dist_right * decay_param)
                 )
 
         return kcp_scores
@@ -154,8 +152,13 @@ class KcpLearner(BaseEstimator, OutlierMixin):
             expected_frac_anomaly=self.expected_frac_anomaly,
         )
 
-        return np.array([- score for score in self._kcp_ss(
-            detected_change_points=detected_change_points,
-            n_time_points=len(X),
-            decay_param=self.decay_param
-        )])
+        return np.array(
+            [
+                -score
+                for score in self._kcp_ss(
+                    detected_change_points=detected_change_points,
+                    n_time_points=len(X),
+                    decay_param=self.decay_param,
+                )
+            ]
+        )
