@@ -70,6 +70,9 @@ class KcpLearner(BaseEstimator, OutlierMixin):
         The threshold is computed as the score value corresponding to the given
         expected fraction of anomalies (`expected_frac_anomaly`).
         """
+        if hasattr(X, "values"):
+            X = X.values
+
         # No training per se, just compute offset_ threshold for scoring
         self._fit_data_shape_ = X.shape
 
@@ -164,19 +167,35 @@ class KcpLearner(BaseEstimator, OutlierMixin):
         # Return negative scores to align with OutlierMixin conventions
         return -np.array(scores, dtype=float)
 
-    def predict(self, X):
+    def decision_function(self, X):
         """
-        Predict inlier (-1) or outlier (+1) labels based on the learned threshold.
+        Compute the decision function for each sample:
+            decision = score_samples(X) - offset_
+
+        Higher values indicate more normal (inlier) points.
+        Lower (more negative) values indicate stronger anomalies.
 
         Returns
         -------
-        np.ndarray
-            Array of shape (n_samples,) with values:
-            -1 → anomaly/outlier
-            +1 → inlier
+        np.ndarray of shape (n_samples,)
         """
-        decision_func = self.score_samples(X) - self.offset_
-        # In scikit-learn convention, negative decision_function = outlier
-        is_inlier = np.ones_like(decision_func, dtype=int)
-        is_inlier[decision_func < 0] = -1
-        return is_inlier
+        if not hasattr(self, "offset_"):
+            raise ValueError("You must call fit() before decision_function().")
+        return self.score_samples(X) - self.offset_
+
+    def predict(self, X):
+        """
+        Predict whether each sample is an inlier (+1) or an outlier (-1),
+        using the decision function and the learned threshold (offset_).
+
+        Returns
+        -------
+        np.ndarray of shape (n_samples,)
+            Labels:
+                +1 → inlier
+                -1 → outlier
+        """
+        decision = self.decision_function(X)
+        labels = np.ones_like(decision, dtype=int)
+        labels[decision < 0] = -1
+        return labels

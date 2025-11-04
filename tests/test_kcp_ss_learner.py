@@ -44,3 +44,15 @@ def test_lower_scores_are_more_anomalous(mock_data):
     preds = learner.predict(mock_data)
     # Ensure that predicted outliers have lower decision_function values
     assert np.mean(scores[preds == -1]) < np.mean(scores[preds == 1])
+
+def test_decision_function_and_predict(mock_data):
+    learner = KcpLearner(expected_frac_anomaly=0.05)
+    learner.fit(mock_data)
+
+    decision = learner.decision_function(mock_data)
+    preds = learner.predict(mock_data)
+
+    assert decision.shape == (mock_data.shape[0],)
+    assert set(preds) <= {-1, 1}
+    # Outliers should correspond to smaller (more negative) decision values
+    assert np.mean(decision[preds == -1]) < np.mean(decision[preds == 1])
