@@ -1,60 +1,61 @@
 """
-This module, `kcp_ss_learner` (Kernel Change Point Sample Scorer Learner), includes a wrapper to
-perform anomaly scoring as understood in the TADkit formalism, based on this library's change-point
-detection methodology.
+Kernel Change Point Sample Scorer Learner (`kcp_ss_learner`)
 
-The kernel change-point detection algorithm outputs a final list of time indices at which it thinks
-that "something happened".
+This module provides a Scikit-Learn-style wrapper for performing anomaly scoring
+compatible with the TADkit formalism, based on the Kernel Change Point (KCP) detection
+methodology.
 
-Other methods output a score at __all__ time indices, where the higher the score is, the more we
-believe that "something happened there".
+The KCP algorithm identifies a discrete list of time indices at which change-points
+are likely to occur. This wrapper translates those discrete detections into a continuous
+score for *every* time index, with values in [0, 1], where higher values indicate a
+greater likelihood of an anomaly occurring at that point.
 
-In order to allow the kernel change-point method to be integrated into a Python package based
-around score samples, we have implemented a function __kcp_ss__ which takes the __kcp_ds__ output
-list of change-points and turns them into scores at __all time indices__.
-
-Remember that the kernel change-point detection algorithm truly believes that it has found the true
-and only set of change-points. However, due to random noise, it could have been that a true
-change-point was immediately before or immediately after a detected change-point, i.e., 1 or 2 or
-maybe even 3 time indices before or after.
-
-We give a score of 1 at each detected change-point. Other points are assigned a score that
-decreases as they move away from the detected change-point, in a way parameterized by a decay
-parameter (gamma).
+The score decays exponentially with distance from each detected change-point,
+controlled by the `decay_param` parameter.
 """
-from typing import Any, Dict, List, Literal, Optional, Sequence
 
-from sklearn.base import BaseEstimator, OutlierMixin
-
-from kcpdi import kcp_ds
+from __future__ import annotations
+from typing import Any, Dict, Literal, Optional, Sequence
 
 import numpy as np
+from sklearn.base import BaseEstimator, OutlierMixin
+
+from kcpdi.kcp_ds import kcp_ds
 
 
 class KcpLearner(BaseEstimator, OutlierMixin):
-    required_properties = []
+    """
+    Scikit-Learn–style learner that converts change-point detections
+    into dense anomaly scores across all time indices.
 
-    params_description = {
-        "decay_param": {
-            "description": "How fast the score decays around the change-points.",
-            "family": "postprocessing",
-            "value_type": "log_range",
-            "log_start": -2,
-            "log_step": 0.1,
-            "log_stop": 2,
-            "default": 1,
-        }
-    }
+    Attributes
+    ----------
+    kernel : {"linear", "cosine", "rbf"}
+        Kernel type used for the change-point detection.
+    params : dict, optional
+        Parameters passed to the kernel change-point detector.
+    max_n_time_points : int
+        Maximum allowed number of time points in a sequence.
+    min_n_time_points : int
+        Minimum allowed number of time points in a sequence.
+    expected_frac_anomaly : float
+        Expected proportion of anomaly points in the dataset.
+    decay_param : float
+        Controls how rapidly scores decay away from detected change-points.
+        Higher values → faster decay.
+    """
 
     def __init__(
-            self,
-            kernel: Literal["linear", "cosine", "rbf"] = "linear",
-            params: Optional[Dict[str, Any]] = None,
-            max_n_time_points: int = 2000,
-            min_n_time_points: int = 10,
-            expected_frac_anomaly: float = 1 / 1000,
-            decay_param: float = 1.,
+        self,
+        kernel: Literal["linear", "cosine", "rbf"] = "linear",
+        params: Optional[Dict[str, Any]] = None,
+        max_n_time_points: int = 2000,
+        min_n_time_points: int = 10,
+        expected_frac_anomaly: float = 1 / 1000,
+        decay_param: float = 1.0,
     ):
+        if decay_param < 0:
+            raise ValueError("decay_param must be non-negative.")
         self.kernel = kernel
         self.params = params
         self.max_n_time_points = max_n_time_points
@@ -62,89 +63,92 @@ class KcpLearner(BaseEstimator, OutlierMixin):
         self.expected_frac_anomaly = expected_frac_anomaly
         self.decay_param = decay_param
 
-    def fit(self, X, y=None):
+    def fit(self, X, y=None, sample_weight=None):
+        """
+        Fits the learner and determines the decision threshold (offset_) for predictions.
+
+        The threshold is computed as the score value corresponding to the given
+        expected fraction of anomalies (`expected_frac_anomaly`).
+        """
+        if hasattr(X, "values"):
+            X = X.values
+
+        # No training per se, just compute offset_ threshold for scoring
+        self._fit_data_shape_ = X.shape
+
+        # Compute anomaly scores
+        scores = self.score_samples(X)
+        contamination = np.clip(self.expected_frac_anomaly, 1e-6, 0.5)
+        self.offset_ = np.percentile(scores, 100.0 * contamination)
+
         return self
 
     @staticmethod
     def _kcp_ss(
-            detected_change_points: Sequence[int],
-            n_time_points: int,
-            decay_param: float = 1.,
-    ) -> List[float]:
-        """Take the output list of detected change-points from the
-        function kcp_ds() and transform them into a score at each time
-        point from 0 (low probability of an anomaly at the time point)
-        to 1 (high probability of an anomaly at the time point).
-
-        Args:
-            detected_change_points: The detected change-points. It
-                should be the first output of the kcp_ds function.
-            n_time_points: The number of time points in the input data.
-                Usually this will be something like: np.shape(data)[0].
-            decay_param: Parameter that defines how fast the score
-                decays around the change-points. The larger this value,
-                the faster it decays.
+        detected_change_points: Sequence[int],
+        n_time_points: int,
+        decay_param: float = 1.0,
+    ) -> np.ndarray:
         """
+        Transform detected change-points into a dense anomaly score.
+
+        Parameters
+        ----------
+        detected_change_points : sequence of int
+            Indices of detected change-points from `kcp_ds`.
+        n_time_points : int
+            Total number of time indices in the sequence.
+        decay_param : float, default=1.0
+            Controls the exponential decay rate away from each change-point.
+
+        Returns
+        -------
+        np.ndarray
+            Array of shape (n_time_points,) containing anomaly scores ∈ [0, 1].
+        """
+        if n_time_points <= 0:
+            raise ValueError("n_time_points must be a positive integer.")
         if decay_param < 0:
-            raise ValueError(
-                "decay_param has to be positive."
-            )
+            raise ValueError("decay_param must be non-negative.")
 
-        # Create list of 0s of length n_time_points
-        kcp_scores = [0] * n_time_points
+        detected_change_points = sorted(set(detected_change_points))
+        scores = np.zeros(n_time_points, dtype=float)
 
-        if not len(detected_change_points):
-            return kcp_scores
+        if not detected_change_points:
+            return scores
 
-        for i in range(n_time_points):
+        # Create an array of distances to the nearest change-point for each index
+        indices = np.arange(n_time_points)
+        distances = np.full(n_time_points, np.inf)
 
-            # Cases:
-            # 1) i is in the list of change-point indices
-            # 2) i is before the first change-point index
-            # 3) i is between two change-point indices
-            # 4) i is after the last change-point index
+        for cp in detected_change_points:
+            # Update with smaller distances as we go
+            new_distances = np.abs(indices - cp)
+            distances = np.minimum(distances, new_distances)
 
-            # Create a local version of the input variable detected_change_points
-            # and append i to it:
-            local_detected_change_points = detected_change_points.copy()
-            local_detected_change_points.append(i)
+        # Compute decayed scores: 1 at cp, decaying exponentially with distance
+        scores = (0.5) ** (distances * decay_param)
+        scores[detected_change_points] = 1.0  # ensure exact peaks
 
-            # A couple of useful values:
-            sum_first = sum(i < j for j in detected_change_points)
-            sum_last = sum(i > j for j in detected_change_points)
+        return scores
 
-            # Case (1)
-            if len(set(local_detected_change_points)) == len(detected_change_points):
-                kcp_scores[i] = 1
+    def score_samples(self, X: np.ndarray) -> np.ndarray:
+        """
+        Compute negative anomaly scores for each time index in X.
 
-            # Case (2)
-            elif sum_first == len(detected_change_points):
-                # We only have the distance to the first change-point index to deal with:
-                curr_dist = abs(i - detected_change_points[0])
-                kcp_scores[i] = (1 / 2) ** (curr_dist * decay_param)
+        Parameters
+        ----------
+        X : np.ndarray or pd.DataFrame
+            Input data of shape (n_samples, n_features).
 
-            # Case (4)
-            elif sum_last == len(detected_change_points):
-                # We only have the distance to the last change-point index to deal with:
-                curr_dist = abs(i - detected_change_points[-1])
-                kcp_scores[i] = (1 / 2) ** (curr_dist * decay_param)
-
-            # Case (3)
-            else:
-                n_left = sum(i > j for j in detected_change_points)
-                curr_dist_left = abs(i - detected_change_points[n_left - 1])
-                curr_dist_right = abs(i - detected_change_points[n_left])
-                kcp_scores[i] = (1 / 2) * (
-                    (1 / 2) ** (curr_dist_left * decay_param) +
-                    (1 / 2) ** (curr_dist_right * decay_param)
-                )
-
-        return kcp_scores
-
-    def score_samples(self, X):
-        if hasattr(X, "values"):
-            # small hack to handle DataFrame s
+        Returns
+        -------
+        np.ndarray
+            Array of shape (n_samples,) of negative anomaly scores.
+        """
+        if hasattr(X, "values"):  # handle pandas DataFrame
             X = X.values
+
         detected_change_points, _ = kcp_ds(
             data=X,
             kernel=self.kernel,
@@ -154,8 +158,44 @@ class KcpLearner(BaseEstimator, OutlierMixin):
             expected_frac_anomaly=self.expected_frac_anomaly,
         )
 
-        return np.array([- score for score in self._kcp_ss(
+        scores = self._kcp_ss(
             detected_change_points=detected_change_points,
             n_time_points=len(X),
-            decay_param=self.decay_param
-        )])
+            decay_param=self.decay_param,
+        )
+
+        # Return negative scores to align with OutlierMixin conventions
+        return -np.array(scores, dtype=float)
+
+    def decision_function(self, X):
+        """
+        Compute the decision function for each sample:
+            decision = score_samples(X) - offset_
+
+        Higher values indicate more normal (inlier) points.
+        Lower (more negative) values indicate stronger anomalies.
+
+        Returns
+        -------
+        np.ndarray of shape (n_samples,)
+        """
+        if not hasattr(self, "offset_"):
+            raise ValueError("You must call fit() before decision_function().")
+        return self.score_samples(X) - self.offset_
+
+    def predict(self, X):
+        """
+        Predict whether each sample is an inlier (+1) or an outlier (-1),
+        using the decision function and the learned threshold (offset_).
+
+        Returns
+        -------
+        np.ndarray of shape (n_samples,)
+            Labels:
+                +1 → inlier
+                -1 → outlier
+        """
+        decision = self.decision_function(X)
+        labels = np.ones_like(decision, dtype=int)
+        labels[decision < 0] = -1
+        return labels
